@@ -1,0 +1,31 @@
+name: Deploy mdBook site to GitHub Pages
+    on:
+      # Trigger the workflow on pushes to the main branch
+      push:
+        branches:
+          - main
+
+    jobs:
+      deploy:
+        runs-on: ubuntu-latest
+        permissions:
+          contents: write
+        steps:
+          # 1. Check out the repository so the job can access it
+          - name: Checkout
+            uses: actions/checkout@v4
+          # 2. Install mdbook using a pre-built action
+          - name: Install mdBook
+            uses: peaceiris/actions-mdbook@v2
+            with:
+              mdbook-version: 'latest'
+          # 3. Build the book
+          - name: Build mdBook
+            run: mdbook build
+          # 4. Deploy the built book to the gh-pages branch
+          - name: Deploy to GitHub Pages
+            uses: peaceiris/actions-gh-pages@v4
+            with:
+              github_token: ${{ secrets.GITHUB_TOKEN }}
+              # The directory where mdbook builds the static files
+              publish_dir: ./book
